@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom'
 import { usePersonDetails, usePersonMovieCredits } from '../api/useMovies'
 import MovieCard from '../components/MovieCard'
 
-export function PersonDetails() {
+export default function PersonDetails() {
   const { id } = useParams()
   const { data: person, isLoading, isError, error, refetch } = usePersonDetails(id)
   const { data: credits } = usePersonMovieCredits(id)

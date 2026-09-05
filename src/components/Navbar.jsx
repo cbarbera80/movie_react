@@ -4,6 +4,7 @@ const links = [
   { to: '/', label: 'Home' },
   { to: '/search', label: 'Search' },
   { to: '/favorites', label: 'Favorites' },
+  { to: '/discover', label: 'Discover' },
 ]
 
 export default function Navbar() {

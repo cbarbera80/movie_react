@@ -20,8 +20,9 @@ export async function tmdbFetch(endpoint, params = {}) {
 function buildUrl(endpoint, params = {}) {
   const url = new URL(BASE_URL + endpoint)
   Object.entries(params).forEach(([key, value]) => {
-    url.searchParams.append(key, value)
+    if (value !== undefined && value !== null && value !== '') {
+      url.searchParams.append(key, value)
+    }
   })
-
   return url.toString()
 }

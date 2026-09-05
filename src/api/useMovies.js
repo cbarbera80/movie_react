@@ -49,3 +49,22 @@ export function usePersonMovieCredits(id) {
     enabled: !!id
   })
 }
+export function useGenres() {
+  return useQuery({
+    queryKey: ['genres'],
+    queryFn: () => tmdbFetch(`/genre/movie/list`),
+    staleTime: 1000 * 60 * 60
+  })
+}
+export function useDiscoverMovies(filters) {
+  return useQuery({
+    queryKey: ['discover', filters],
+    queryFn: () => tmdbFetch('/discover/movie', {
+      with_genres: filters.genre || undefined,
+      primary_release_year: filters.year || undefined,
+      'vote_average.gte': filters.minRating || undefined,
+      'vote_count.gte': 100,
+      sort_by: filters.sortBy,
+    }),
+  })
+}
