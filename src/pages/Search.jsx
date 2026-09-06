@@ -1,10 +1,32 @@
-import { useState } from "react"
-import { useSearchMovies } from "../api/useMovies"
+import { useState, useRef, useEffect } from "react"
+import { useSearchMoviesInfinite } from "../hooks/useMovies"
+import { useDebouncedValue } from "../hooks/useDebouncedValue"
 import MovieCard from '../components/MovieCard'
 
 export default function Search() {
   const [query, setQuery] = useState('')
-  const { data, isLoading, isError, error } = useSearchMovies(query)
+  const debouncedQuery = useDebouncedValue(query, 400)
+  const { data, isLoading, isError, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useSearchMoviesInfinite(debouncedQuery)
+
+  const movies = data?.pages.flatMap((page) => page.results) ?? []
+  const sentinelRef = useRef(null)
+
+  useEffect(() => {
+    const el = sentinelRef.current
+    if (!el) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage()
+        }
+      },
+      { rootMargin: '400px' }
+    )
+
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage])
 
   return (
     <div>
@@ -24,16 +46,25 @@ export default function Search() {
 
       {isError && <p>Error: {error.message}</p>}
 
-      {data && data.results.length === 0 && (
-        <p className="text-gray-500">No movies found for "{query}".</p>
+      {data && movies.length === 0 && (
+        <p className="text-gray-500">No movies found for "{debouncedQuery}".</p>
       )}
 
-      {data && data.results.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {data.results.map((movie) => (
-            <MovieCard key={movie.id} movie={movie} />
-          ))}
-        </div>
+      {movies.length > 0 && (
+        <>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {movies.map((movie) => (
+              <MovieCard key={movie.id} movie={movie} />
+            ))}
+          </div>
+
+          {hasNextPage && (
+            <div ref={sentinelRef} className="h-10" />
+          )}
+          {isFetchingNextPage && (
+            <p className="text-center text-gray-500 mt-4">Loading more...</p>
+          )}
+        </>
       )}
     </div>
   )

@@ -1,4 +1,4 @@
-import { useMoviesByCategory } from '../api/useMovies'
+import { useMoviesByCategory } from '../hooks/useMovies'
 import MovieCard from '../components/MovieCard'
 
 const CATEGORIES = [

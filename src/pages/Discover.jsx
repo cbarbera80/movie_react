@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useGenres, useDiscoverMovies } from '../api/useMovies'
+import { useGenres, useDiscoverMovies } from '../hooks/useMovies'
 import MovieCard from '../components/MovieCard'
 
 const YEARS = Array.from({ length: 30 }, (_, i) => new Date().getFullYear() - i)

@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom'
-import { useMovieDetail, useMovieCredits, useMovieVideos } from '../api/useMovies'
+import { useMovieDetail, useMovieCredits, useMovieVideos } from '../hooks/useMovies'
 import { Link } from "react-router-dom"
 
 export default function MovieDetail() {

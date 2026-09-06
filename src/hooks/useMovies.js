@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query'
-import { tmdbFetch } from './tmdb'
+import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
+import { tmdbFetch } from '../api/tmdb'
 
 export function useMoviesByCategory(category) {
   return useQuery({
@@ -66,5 +66,15 @@ export function useDiscoverMovies(filters) {
       'vote_count.gte': 100,
       sort_by: filters.sortBy,
     }),
+  })
+}
+export function useSearchMoviesInfinite(query) {
+  return useInfiniteQuery({
+    queryKey: ['search', 'infinite', query],
+    queryFn: ({ pageParam }) => tmdbFetch('/search/movie', { query, page: pageParam }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) =>
+      lastPage.page < lastPage.total_pages ? lastPage.page + 1 : undefined,
+    enabled: query.trim().length > 0,
   })
 }

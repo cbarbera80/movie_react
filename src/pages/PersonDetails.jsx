@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom'
-import { usePersonDetails, usePersonMovieCredits } from '../api/useMovies'
+import { usePersonDetails, usePersonMovieCredits } from '../hooks/useMovies'
 import MovieCard from '../components/MovieCard'
 
 export default function PersonDetails() {
