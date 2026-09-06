@@ -1,11 +1,18 @@
 import { useParams } from 'react-router-dom'
 import { usePersonDetails, usePersonMovieCredits } from '../hooks/useMovies'
 import MovieCard from '../components/MovieCard'
+import { useMemo } from 'react'
 
 export default function PersonDetails() {
   const { id } = useParams()
   const { data: person, isLoading, isError, error, refetch } = usePersonDetails(id)
   const { data: credits } = usePersonMovieCredits(id)
+
+  const movies = useMemo(
+    () => credits?.cast
+      ?.slice()
+      .sort((a, b) => (b.release_date || '').localeCompare(a.release_date || '')
+      ), [credits])
 
   if (isLoading) return <p>Loading...</p>
 
@@ -21,10 +28,6 @@ export default function PersonDetails() {
   const photoUrl = person.profile_path
     ? `https://image.tmdb.org/t/p/w300${person.profile_path}`
     : null
-
-  const movies = credits?.cast
-    ?.slice()
-    .sort((a, b) => (b.release_date || '').localeCompare(a.release_date || ''))
 
   return (
     <div>
